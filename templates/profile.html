@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  .profile-bg {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-bg::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, #a21caf33 0%, transparent 70%);
+    z-index: 0;
+    animation: float1 8s ease-in-out infinite alternate;
+  }
+  .profile-bg::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; right: -100px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, #6366f133 0%, transparent 70%);
+    z-index: 0;
+    animation: float2 10s ease-in-out infinite alternate;
+  }
+  @keyframes float1 {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(30px); }
+  }
+  @keyframes float2 {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-30px); }
+  }
+  .profile-card {
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 32px rgba(80, 80, 180, 0.13);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px) saturate(1.2);
+    -webkit-backdrop-filter: blur(8px) saturate(1.2);
+    border-left: 6px solid #6366f1;
+    padding: 2.7rem 2.2rem 2.2rem 2.2rem;
+    max-width: 440px;
+    margin: 0 auto;
+    margin-top: 3.5rem;
+    position: relative;
+    z-index: 1;
+  }
+  .profile-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: linear-gradient(120deg, #6366f1 60%, #a21caf 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #fff;
+    font-size: 3.1rem;
+    margin: 0 auto 1.7rem auto;
+    box-shadow: 0 2px 16px rgba(80, 80, 180, 0.13);
+    border: 4px solid #fff;
+    transition: box-shadow 0.3s;
+    animation: avatarPulse 2.5s infinite alternate;
+  }
+  @keyframes avatarPulse {
+    0% { box-shadow: 0 2px 16px rgba(80, 80, 180, 0.13); }
+    100% { box-shadow: 0 8px 32px #a21caf33; }
+  }
+  .profile-info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 1.2rem;
+    font-size: 1.13rem;
+  }
+  .profile-info-label {
+    font-weight: 600;
+    color: #6366f1;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.08rem;
+  }
+  .profile-info-value {
+    color: #374151;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .profile-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #6366f1;
+    text-align: center;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.01em;
+  }
+  .profile-quote {
+    text-align: center;
+    color: #a21caf;
+    font-size: 1.08rem;
+    font-style: italic;
+    margin-bottom: 2.2rem;
+    opacity: 0.85;
+  }
+</style>
+<div class="profile-bg py-8 min-h-screen">
+  <div class="profile-card">
+    <div class="profile-avatar">{{ user.name[0]|upper if user.name else user.email[0]|upper }}</div>
+    <div class="profile-title">Profile</div>
+    <div class="profile-quote">"Creativity takes courage."</div>
+    <div class="profile-info-row">
+      <span class="profile-info-label"><i class="bi bi-person-circle"></i> Name:</span>
+      <span class="profile-info-value">{{ user.name }}</span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label"><i class="bi bi-envelope"></i> Email:</span>
+      <span class="profile-info-value">{{ user.email }}</span>
+    </div>
+    <div class="profile-info-row">
+      <span class="profile-info-label"><i class="bi bi-calendar-check"></i> Member since:</span>
+      <span class="profile-info-value">{{ user.created_at[:10] }}</span>
+    </div>
+  </div>
+</div>
+{% endblock %} 
