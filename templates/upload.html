@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  .upload-bg { background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%); min-height: 100vh; }
+  .upload-card {
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 24px rgba(80, 80, 180, 0.10);
+    border-left: 6px solid #6366f1;
+    background: #fff;
+    padding: 2.5rem 2rem 2rem 2rem;
+    max-width: 480px;
+    margin: 0 auto;
+    margin-top: 3rem;
+  }
+  .upload-icon {
+    font-size: 3.2rem;
+    color: #6366f1;
+    background: #e0e7ff;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.2rem auto;
+    box-shadow: 0 2px 12px rgba(80, 80, 180, 0.10);
+  }
+  .upload-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #6366f1;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  .upload-subtitle {
+    text-align: center;
+    color: #6b7280;
+    font-size: 1.08rem;
+    margin-bottom: 2rem;
+  }
+  .upload-label {
+    font-weight: 600;
+    color: #6366f1;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+  .upload-input, .upload-textarea, .upload-file {
+    width: 100%;
+    border-radius: 0.7rem;
+    border: 1.5px solid #e0e7ff;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1.2rem;
+    font-size: 1.05rem;
+    transition: border 0.15s, box-shadow 0.15s;
+    background: #f8fafc;
+  }
+  .upload-input:focus, .upload-textarea:focus, .upload-file:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px #6366f133;
+    outline: none;
+  }
+  .upload-btn {
+    width: 100%;
+    background: #6366f1;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 0.7rem;
+    padding: 0.8rem 0;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    transition: background 0.15s;
+    box-shadow: 0 2px 8px rgba(80, 80, 180, 0.08);
+  }
+  .upload-btn:hover {
+    background: #a21caf;
+    color: #fff;
+  }
+</style>
+<div class="upload-bg py-8 min-h-screen">
+  <div class="upload-card">
+    <div class="upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+    <div class="upload-title">Upload New Artwork</div>
+    <div class="upload-subtitle">Share your creativity with the world! Fill in the details and upload your masterpiece below.</div>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+      <label class="upload-label" for="title">Title</label>
+      <input type="text" id="title" name="title" required placeholder="Artwork title" title="Title" class="upload-input">
+      <label class="upload-label" for="description">Description</label>
+      <textarea id="description" name="description" required placeholder="Artwork description" title="Description" class="upload-textarea" rows="3"></textarea>
+      <label class="upload-label" for="image">Image</label>
+      <input type="file" id="image" name="image" accept="image/*" required title="Image" class="upload-file">
+      <button type="submit" class="upload-btn">Upload</button>
+    </form>
+  </div>
+</div>
+{% endblock %} 

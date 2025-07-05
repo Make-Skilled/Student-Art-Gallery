@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  body { background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%); }
+  .art-card {
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 24px rgba(80, 80, 180, 0.08);
+    border-left: 6px solid #6366f1;
+    transition: box-shadow 0.2s, transform 0.2s;
+    background: #fff;
+  }
+  .art-card:hover {
+    box-shadow: 0 8px 32px rgba(80, 80, 180, 0.16);
+    transform: translateY(-4px) scale(1.01);
+    border-left-color: #a21caf;
+  }
+  .art-img-bg {
+    background: linear-gradient(120deg, #e0e7ff 60%, #fce7f3 100%);
+    border-radius: 1.2rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 340px;
+  }
+  .art-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    box-shadow: 0 2px 12px rgba(80, 80, 180, 0.08);
+    background: #f8fafc;
+  }
+  .artist-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .artist-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e0e7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #6366f1;
+    font-size: 1.1rem;
+  }
+  .comment-badge {
+    background: #f3f4f6;
+    color: #6366f1;
+    border-radius: 1rem;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.95rem;
+    margin-left: 0.5rem;
+  }
+  .like-badge {
+    background: #fce7f3;
+    color: #a21caf;
+    border-radius: 1rem;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.95rem;
+    margin-left: 0.5rem;
+  }
+  .comment-section {
+    background: #f8fafc;
+    border-radius: 1rem;
+    padding: 0.7rem 1rem;
+    margin-top: 0.5rem;
+  }
+  .comment-item {
+    background: #f3f4f6;
+    border-radius: 0.7rem;
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.97rem;
+  }
+</style>
+
+<div class="container mt-4" style="max-width: 700px;">
+  <h2 class="mb-4 text-center fw-bold text-indigo-700" style="font-size:2.2rem;">Art Feed</h2>
+  {% for art in artworks %}
+    <div class="art-card mb-5 p-0 overflow-hidden">
+      <div class="art-img-bg">
+        <img src="{{ url_for('serve_image', file_id=art.file_id) }}" class="art-img" alt="{{ art.title }}">
+      </div>
+      <div class="card-body p-4">
+        <div class="artist-info mb-2">
+          <div class="artist-avatar">{{ art.user_name[0]|upper }}</div>
+          <div>
+            <span class="fw-bold text-indigo-700">{{ art.user_name }}</span>
+            <span class="text-muted small ms-2">{{ art.created_at.strftime('%Y-%m-%d') if art.created_at else '' }}</span>
+          </div>
+        </div>
+        <h5 class="card-title mb-1">{{ art.title }}</h5>
+        <p class="card-text text-gray-700 mb-3">{{ art.description }}</p>
+        <div class="d-flex align-items-center mb-2 gap-2">
+          <button 
+            class="btn btn-outline-primary btn-sm me-2 like-btn d-flex align-items-center" 
+            data-artwork-id="{{ art._id }}"
+            title="Like this artwork"
+            {% if art.liked_by_user %}disabled{% endif %}>
+            <i class="bi bi-hand-thumbs-up{% if art.liked_by_user %}-fill{% endif %} me-1"></i>
+            <span>{% if art.liked_by_user %}Liked{% else %}Like{% endif %}</span>
+          </button>
+          <span class="like-badge"><i class="bi bi-heart-fill"></i> <span id="like-count-{{ art._id }}">{{ art.like_count }}</span></span>
+          <button class="btn btn-outline-secondary btn-sm ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#comments-{{ art._id }}" aria-expanded="false" aria-controls="comments-{{ art._id }}">
+            <i class="bi bi-chat-left-text"></i> Comments
+          </button>
+          <span class="comment-badge"><i class="bi bi-chat-dots"></i> {{ art.comments|length }}</span>
+        </div>
+        <div class="collapse comment-section" id="comments-{{ art._id }}">
+          <form class="comment-form d-flex mb-2" data-artwork-id="{{ art._id }}">
+            <input type="text" name="content" class="form-control me-2" placeholder="Add a comment..." required>
+            <button type="submit" class="btn btn-outline-secondary btn-sm" title="Send comment">
+              <i class="bi bi-send"></i>
+            </button>
+          </form>
+          {% for comment in art.comments %}
+            <div class="comment-item">
+              <i class="bi bi-person-circle"></i>
+              <span class="fw-bold">{{ comment.user_name }}</span>: {{ comment.content }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.querySelectorAll('.like-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const artworkId = this.getAttribute('data-artwork-id');
+    fetch(`/like/${artworkId}`, {method: 'POST'})
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const countSpan = document.getElementById('like-count-' + artworkId);
+          countSpan.textContent = parseInt(countSpan.textContent) + 1;
+          this.innerHTML = '<i class="bi bi-hand-thumbs-up-fill me-1"></i> <span>Liked</span>';
+          this.disabled = true;
+        } else {
+          alert(data.message || 'Error');
+        }
+      });
+  });
+});
+
+document.querySelectorAll('.comment-form').forEach(form => {
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const artworkId = this.getAttribute('data-artwork-id');
+    const formData = new FormData(this);
+    fetch(`/comment/${artworkId}`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.message || 'Error');
+      }
+    });
+  });
+});
+</script>
+{% endblock %} 
